@@ -1,23 +1,28 @@
 import os
+import random
 import asyncio
 from dotenv import load_dotenv
 from pydantic import BaseModel
 from agents import Agent, Runner, function_tool
+from typing import List
 
 
 load_dotenv()
 
+class Weather(BaseModel):   
+    city: str
+    temperature_range: str
+    conditions: str
+
 class WeatherData(BaseModel):
-    location: str
-    temperature: float
-    condition: str
+    weather: List[Weather]
 
 
 @function_tool
 def get_weather(location: str) -> str:
     """Get the current weather for a given location."""
     # Simulate an API call to get weather data
-    return f"Weather in {location}: 25°C, Sunny"
+    return f"Weather in {location}: {random.randint(20, 30)}°C, {random.choice(['Sunny', 'Cloudy', 'Rainy'])}"
 
 
 agent = Agent(
@@ -32,10 +37,10 @@ async def main():
     # Run the agent with a sample input
     result = await Runner.run(
         starting_agent=agent,
-        input="What's the weather like in New York?",
+        input="What's the weather like in Lahore, Karachi, Islamabad?",
     )
-    print("Full Output", result.final_output)
-    print("Parameter Output", result.final_output.location)
+    print("Full Output: ", result.final_output)
+    # print("Parameter Output", result.final_output.location)
 
 
 if __name__ == "__main__":

@@ -6,6 +6,6 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "logfire>=3.14.0",
-    "openai-agents>=0.0.11",
+    "openai-agents>=0.0.14",
     "python-dotenv>=1.1.0",
 ]

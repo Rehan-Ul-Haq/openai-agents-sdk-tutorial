@@ -1,3 +1,8 @@
+"""
+This example to provide a simple get_weather function as a tool for an agent.
+Creating pydantic model for validation is optional but recommended.
+The option 'enable_verbose_stdout_logging' is used to enable verbose logging for debugging purposes.
+"""
 import os
 import asyncio
 from pydantic import BaseModel

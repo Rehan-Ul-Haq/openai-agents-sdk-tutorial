@@ -1,3 +1,12 @@
+"""
+This example provides followings for learning purposes:
+1. For convenience, those who don't have openai api key, can choose gemini.
+2. Tracing is provided through Logfire. So without API Key, you can still run the code. 
+3. Different Run methods  are provided in same example just for learning purposes. 
+4. In real applications, you would want to separate these into different files.
+5. The code is designed to be run in a terminal, and it will prompt the user for input.
+
+"""
 import os
 import asyncio
 import logfire

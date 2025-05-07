@@ -1,3 +1,8 @@
+"""
+This is a simple chat agent that uses OpenAI's GPT-3.5 model to respond to queries.
+Tracing can be disabled by uncommenting the set_tracing_disabled line.
+"""
+
 import os
 import asyncio
 from dotenv import load_dotenv
