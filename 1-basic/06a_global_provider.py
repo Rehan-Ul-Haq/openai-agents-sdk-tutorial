@@ -45,14 +45,14 @@ set_default_openai_api("chat_completions")
 billing_agent = Agent(
     name='Billing Support Agent',
     instructions='You are a billing support agent. You can assist with billing inquiries.',
-    handoff_description="Handles billing inquiries and can transfer to other agents if needed.",
+    handoff_description="Handles billing inquiries.",
     model=ext_model,
     )
 
 tech_agent = Agent(
     name='Technical Support Agent',
     instructions='You are a technical support agent. You can assist with technical inquiries.',
-    handoff_description="Handles technical inquiries and can transfer to other agents if needed.",
+    handoff_description="Handles technical inquiries.",
     model=ext_model,
     )
 

@@ -12,6 +12,7 @@ from agents import (
     set_default_openai_api,
 )
 from agents.tracing import GLOBAL_TRACE_PROVIDER
+from agents.extensions.handoff_prompt import RECOMMENDED_PROMPT_PREFIX
 
 
 # Load environment variables from .env file
@@ -43,20 +44,21 @@ set_default_openai_api('chat_completions')
 billing_agent = Agent(
     name='Billing Support Agent',
     instructions='You are a billing support agent. You can assist with billing inquiries.',
-    handoff_description="Handles billing inquiries and can transfer to other agents if needed.",
+    handoff_description="Handles billing inquiries.",
     model='gemini-2.0-flash'
     )
 
 tech_agent = Agent(
     name='Technical Support Agent',
     instructions='You are a technical support agent. You can assist with technical inquiries.',
-    handoff_description="Handles technical inquiries and can transfer to other agents if needed.",
+    handoff_description="Handles technical inquiries.",
     model='gemini-2.0-flash'
     )
 
 agent = Agent(
     name='Customer Service Agent',
     instructions=(
+        f"{RECOMMENDED_PROMPT_PREFIX}\n"
         'You are a customer service agent. You can assist with general inquiries.'
         'If the inquiry is related to billing, transfer it to the Billing Support Agent.'
         'If the inquiry is related to technical support, transfer it to the Technical Support Agent.'

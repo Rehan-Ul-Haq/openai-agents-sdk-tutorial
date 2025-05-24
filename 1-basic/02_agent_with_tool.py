@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 from agents import Agent, Runner, function_tool
 from agents import enable_verbose_stdout_logging
 
+# Enables verbose logging to stdout (our terminal). This is useful for debugging.
 enable_verbose_stdout_logging()
 
 

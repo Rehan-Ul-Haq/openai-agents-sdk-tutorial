@@ -12,6 +12,7 @@ from agents import (
     RunConfig
 )
 from agents.tracing import  GLOBAL_TRACE_PROVIDER
+from agents.extensions.handoff_prompt import RECOMMENDED_PROMPT_PREFIX
 
 
 
@@ -37,6 +38,39 @@ if not api_key or not base_url or not ext_model:
 # Create an external provider
 ext_client = AsyncOpenAI(api_key=api_key, base_url=base_url)
 
+
+
+# Create an agent with the external provider and function tool
+billing_agent = Agent(
+    name='Billing Support Agent',
+    instructions='You are a billing support agent. You can assist with billing inquiries.',
+    handoff_description="Handles billing inquiries.",
+    )
+
+tech_agent = Agent(
+    name='Technical Support Agent',
+    instructions='You are a technical support agent. You can assist with technical inquiries.',
+    handoff_description="Handles technical inquiries.",
+    )
+
+agent = Agent(
+    name='Customer Service Agent',
+    instructions=(
+        f"{RECOMMENDED_PROMPT_PREFIX}\n"
+        'You are a customer service agent. You can assist with general inquiries.'
+        'If the inquiry is related to billing, transfer it to the Billing Support Agent.'
+        'If the inquiry is related to technical support, transfer it to the Technical Support Agent.'
+        ),
+    handoffs=[billing_agent, tech_agent],
+)
+
+"""
+We define a CustomModelProvider class that inherits from ModelProvider. 
+This class implements the get_model method, which is responsible 
+for returning the appropriate model instance of (Model) based on the provided model name.
+
+"""
+
 # Here we can get model name from environment variable or user input
 # The current run shall run with this specific model name. 
 user_model_name = input("Enter the model name and press Enter: ")
@@ -48,29 +82,6 @@ class CustomModelProvider(ModelProvider):
         return OpenAIChatCompletionsModel(model=model_name or ext_model, openai_client=ext_client)
 
 CUSTOM_MODEL_PROVIDER = CustomModelProvider()
-
-# Create an agent with the external provider and function tool
-billing_agent = Agent(
-    name='Billing Support Agent',
-    instructions='You are a billing support agent. You can assist with billing inquiries.',
-    handoff_description="Handles billing inquiries and can transfer to other agents if needed.",
-    )
-
-tech_agent = Agent(
-    name='Technical Support Agent',
-    instructions='You are a technical support agent. You can assist with technical inquiries.',
-    handoff_description="Handles technical inquiries and can transfer to other agents if needed.",
-    )
-
-agent = Agent(
-    name='Customer Service Agent',
-    instructions=(
-        'You are a customer service agent. You can assist with general inquiries.'
-        'If the inquiry is related to billing, transfer it to the Billing Support Agent.'
-        'If the inquiry is related to technical support, transfer it to the Technical Support Agent.'
-        ),
-    handoffs=[billing_agent, tech_agent],
-)
 
 config = RunConfig(model=user_model_name, model_provider=CUSTOM_MODEL_PROVIDER)
 
