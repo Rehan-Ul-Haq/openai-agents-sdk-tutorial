@@ -11,9 +11,12 @@ from agents import (
     set_default_openai_client,
     ItemHelpers,
     MessageOutputItem,
+    enable_verbose_stdout_logging
 
 
 )
+from agents.tracing import GLOBAL_TRACE_PROVIDER
+import logfire
 
 """
 This example shows the agents-as-tools pattern. The frontline agent receives a user message and
@@ -24,7 +27,16 @@ agents.
 
 load_dotenv()
 
-set_tracing_disabled(True)
+# set_tracing_disabled(True)
+
+
+GLOBAL_TRACE_PROVIDER.shutdown()
+
+logfire.configure()
+logfire.instrument_openai_agents()
+
+
+enable_verbose_stdout_logging()
 
 api_key = os.getenv("GEMINI_API_KEY")
 base_url = os.getenv("BASE_URL")
@@ -69,9 +81,12 @@ italian_agent = Agent(
 orchestrator_agent = Agent(
     name='orchestrator_agent',
     instructions=(
-        "You are a translation agent. You use the tools given to you to translalte"
-        "If asked for multiple translation, you call the relevant tools in order."
+        "You are a translation agent. You use the tools given to you to translalte. "
+        "If asked for multiple translation, you call the relevant tools in order. "
         "You never translate on your own. You always use the provided tools to translate."
+        "Before calling the tools, you inspect the user message and decide which tool to call. "
+        "Do not call the tools if you're not sure about the language to translate to. "
+        "If you are not sure about the language, ask the user to clarify. "
 
     ),
     tools=[
@@ -88,14 +103,6 @@ orchestrator_agent = Agent(
             tool_description="Translate the user's message to italian language."
         )
     ],
-    model=ext_model
-)
-
-synthesizer_agent = Agent(
-    name='synthesizer_agent',
-    instructions=(
-        "You are a synthesizer agent. You inspect the translations, correct if needed."
-    ),
     model=ext_model
 )
 
