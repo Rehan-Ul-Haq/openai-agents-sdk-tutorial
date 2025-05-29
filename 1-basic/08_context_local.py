@@ -27,9 +27,6 @@ if not api_key or not base_url or not ext_model:
 
 # Create an external provider
 ext_client = AsyncOpenAI(api_key=api_key, base_url=base_url)
-
-
-ext_client = AsyncOpenAI(api_key=api_key, base_url=base_url)
 set_default_openai_client(ext_client)
 set_default_openai_api('chat_completions')
 
@@ -49,9 +46,8 @@ PREFERENCES_DB = {
 
 # Tool to fetch user preferences from a mock database
 @function_tool
-def get_user_preferences(wrapper: RunContextWrapper[UserContext]) -> str:
-    """
-    Tool to fetch the user's preferred language.
+def get_user_preferred_language(wrapper: RunContextWrapper[UserContext]) -> str:
+    """Fetches the user's language preference from a mock database.
     """
     user_id = wrapper.context.user_id
     # Fetch preference, default to 'pashtu' if not found
@@ -65,14 +61,17 @@ async def main():
 
     agent = Agent[UserContext](
     name='Assistant',
-    instructions="You're a helpful assistant and assist with user inquiries in their preferred language by using the get_user_preferences tool.",
-    tools=[get_user_preferences],
-    model='gemini-2.0-flash', # gemini-2.0-flash is not calling the function
+    instructions="You're a helpful assistant and assist with user inquiries in their preferred language."
+    "Always plan before responding. Reflect on the user's context and preferences before generating a response."
+    "You have provided a tool to fetch the user's language preference from a mock database."
+    "DO NOT respond in any language other than the user's preferred language.",
+    tools=[get_user_preferred_language],
+    model='gemini-2.0-flash', 
     # model='gemini-2.5-flash-preview-04-17',
 )
     result = await Runner.run(
         starting_agent=agent,
-        input="Draft an email to my manager about the project update.",
+        input="write a short poem about the beauty of nature.",
         context=user_info,
     )
 
