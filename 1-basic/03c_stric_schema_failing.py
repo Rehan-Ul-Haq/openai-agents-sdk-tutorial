@@ -43,12 +43,13 @@ set_default_openai_api('chat_completions')
 
 """
 By default, LLMs generate plain text. However, the models can be guided to output JSON. 
-This is done by specifying a schema for the output. As we say earlier, we create a schema and pass that schema to the agent through 'output_type' parameter. This approach ensures that the model's output not only is valid JSON but also conforms to the specified schema, which is crucial for applications requiring structured data.  
+This is done by specifying a schema for the output. 
+As we said earlier, we create a schema and pass that schema to the agent through 'output_type' parameter. This approach ensures that the model's output not only is valid JSON but also conforms to the specified schema,
+which is crucial for applications requiring structured data.  
 
 This example shows how to handle agent outputs that don't fit the standard JSON schema. Normally, OpenAI Agents enforce a **strict JSON schema** for outputs (so the model's reply is valid JSON). But some Python types (like a `dict[int, ...]` or custom formats) are not strictly JSON-friendly. A dictionary with integer keys, for example, is not valid JSON. In this case, we can use a **non-strict schema** to allow the model to output a dictionary with integer keys.
 This is done by using the `AgentOutputSchema` class, which allows for a more flexible schema definition. The model can then output a dictionary with integer keys, and the agent will still be able to parse it correctly.
 
-The script first shows strict-mode failing, then turns on **non-strict mode**, and even uses a custom parser.
 """
 
 # Here we define a schema for the output which is not JSON-compatible.
@@ -67,6 +68,10 @@ async def main():
     )
 
     input = "Tell me 3 short jokes"
+
+    # UserError exceptions is raised when the output type is not valid JSON.
+    # If not handled, this will cause the application to crash.
+    # We shall handle this exception gracefully and print the error message.
 
     try:
         # Run the agent with strict JSON schema

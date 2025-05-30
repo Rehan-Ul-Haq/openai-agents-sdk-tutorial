@@ -20,7 +20,6 @@ from agents import (
 from agents.tracing import GLOBAL_TRACE_PROVIDER
 
 
-
 load_dotenv()
 
 GLOBAL_TRACE_PROVIDER.shutdown()
@@ -39,20 +38,26 @@ if not api_key or not base_url or not ext_model:
 # For this demo, we are using openai model with Responses API because chat completions API still gives error with non-strict mode.
 # =========================================================
 # Create an external provider
-# ext_client = AsyncOpenAI(api_key=api_key, base_url=base_url)
+ext_client = AsyncOpenAI(api_key=api_key, base_url=base_url)
 
 
-# ext_client = AsyncOpenAI(api_key=api_key, base_url=base_url)
-# set_default_openai_client(ext_client)
+ext_client = AsyncOpenAI(api_key=api_key, base_url=base_url)
+set_default_openai_client(ext_client)
 set_default_openai_api('chat_completions')
 
 #==========================================================
 
 """
-Earlier, we saw with Strict JSON schema enabled but the output type generated was not JSON-compatible due to which the validation was failing.
-The error suggested that either make the output type strict, or pass output_schema_strict=False to your Agent(). But let's  assume, our usecase requires the OutputType which we defined. So we have to pass the output_schema_strict=False to the Agent() to make it non-strict. This will allow the model to output a dictionary with integer keys (Only for Responses API), and the agent will still be able to parse it correctly (Only for Responses API).
+Earlier, we saw with Strict JSON schema enabled but the output type generated was not JSON-compatible 
+due to which the validation was failing.
+The error suggested that either make the output type strict, 
+or pass output_schema_strict=False to your Agent(). But let's  assume, 
+our use case requires the OutputType which we defined. 
+So we have to pass the output_schema_strict=False to the Agent() to make it non-strict. 
+This will allow the model to output a dictionary with integer keys, 
+and the agent will still be able to parse it correctly.
 
-**NOTE**: If you are using the `ChatCompletions` API, we still get the error.
+**Note**: If we use external provider (gemini), we would get an `BadRequestError` error form API.
 """
 
 # Here we define a schema for the output which is not JSON-compatible.
@@ -63,12 +68,12 @@ class OutputType:
 
 
 async def main():
-    # """Now wrap the dataclass(OutputType) in `AgentOutputSchema` with strict mode turned off.
-    # Now the agent is allowed to produce output that might not be perfectly valid JSON (it won’t enforce all JSON schema rules)."""
+    # Now wrap the dataclass(OutputType) in `AgentOutputSchema` with strict mode turned off.
+    # Now the agent is allowed to produce output that might not be perfectly valid JSON (it won’t enforce all JSON schema rules).
     agent = Agent(
         name="Assistant",
         instructions="You're a helpful assistant.",
-        # model=ext_model,
+        model=ext_model,
         output_type=OutputType,
     )
 
@@ -78,8 +83,6 @@ async def main():
     # Run the agent with non-strict JSON schema
     result = await Runner.run(agent, input)
     print(result.final_output)
-
-
 
 
 if __name__ == "__main__":

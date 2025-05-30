@@ -303,11 +303,15 @@ Tokyo is sunny
 ```
 
 ### Best Practices   
-1. Use "run_llm_again" when:
-- You need the LLM to process and refine tool outputs
-- Multiple tool calls might be needed
-- Complex reasoning is required
+
+1. Use "run_llm_again" when:  
+
+  1. You need the LLM to process and refine tool outputs
+  2. Multiple tool calls might be needed
+  3. Complex reasoning is required
+
 2. Use "stop_on_first_tool" when:
+
 - You want direct, unmodified tool outputs
 - The tool result is final and doesn't need processing
 - You want to save on API calls
@@ -325,3 +329,13 @@ Tokyo is sunny
 
 
 
+
+
+
+[hobbit-hole][1]
+
+
+
+
+
+[1]: https://en.wikipedia.org/wiki/Hobbit#Lifestyle

@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from openai import AsyncOpenAI
 from agents import (
     Agent,
+    ModelSettings,
     Runner,
     set_tracing_disabled,
     set_default_openai_api,
@@ -67,7 +68,9 @@ async def main():
         instructions="You are a helpful agent.",
         tools=[get_weather],
         tool_use_behavior='run_llm_again', # Default 
-        model=ext_model
+        model=ext_model,
+        model_settings=ModelSettings(tool_choice="auto"  # Default
+                                     )  
     )
 
     result = await Runner.run(agent, input="What's the weather in Tokyo?")

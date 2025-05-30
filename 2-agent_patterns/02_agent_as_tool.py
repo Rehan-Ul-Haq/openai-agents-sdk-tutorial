@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from openai import AsyncOpenAI
 from agents import (
     Agent,
+    ModelSettings,
     Runner,
     set_tracing_disabled,
     set_default_openai_api,
@@ -42,9 +43,6 @@ api_key = os.getenv("GEMINI_API_KEY")
 base_url = os.getenv("BASE_URL")
 ext_model = os.getenv("MODEL_NAME")
 
-api_key = os.getenv("GEMINI_API_KEY")
-base_url = os.getenv("BASE_URL")
-ext_model = os.getenv("MODEL_NAME")
 
 if not api_key and not base_url and not ext_model:
     raise ValueError ("Please make sure to provide GEMINI_API_KEY, BASE_URL and MODEL_NAME.")
@@ -103,12 +101,13 @@ orchestrator_agent = Agent(
             tool_description="Translate the user's message to italian language."
         )
     ],
-    model=ext_model
+    model=ext_model,
+    model_settings=ModelSettings(parallel_tool_calls=False)
 )
 
-async def main():
+def main():
     input_prompt = input("What would you like to be translated? ")
-    orchestrator_result = await Runner.run(
+    orchestrator_result = Runner.run_sync(
         starting_agent=orchestrator_agent,
         input=input_prompt
     )
@@ -157,4 +156,5 @@ async def main():
 
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    # asyncio.run(main())
+    main()

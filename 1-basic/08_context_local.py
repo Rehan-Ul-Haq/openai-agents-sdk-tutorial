@@ -64,7 +64,8 @@ async def main():
     instructions="You're a helpful assistant and assist with user inquiries in their preferred language."
     "Always plan before responding. Reflect on the user's context and preferences before generating a response."
     "You have provided a tool to fetch the user's language preference from a mock database."
-    "DO NOT respond in any language other than the user's preferred language.",
+    "DO NOT respond in any language other than the user's preferred language."
+    "DO NOT respond by yourself",
     tools=[get_user_preferred_language],
     model='gemini-2.0-flash', 
     # model='gemini-2.5-flash-preview-04-17',

@@ -16,13 +16,13 @@ from agents import (
 )
 
 """
-This example shows how the default behavior of 'tool_use_behavior'.
-The 'run_llm_again' is the default value of the 'tool_use_behavior'.
+This example shows how the default behavior of 'tool_use_behavior' can be changed.
+The 'stop_on_first_tool' option makes sure when tools is called, the output is not sent to LLM.
+The direct result of the tool is returned to the user.
 How it works?
     1. The agent calls a tool.
     2. The tool executes and returns a result.
-    3. The reulst is sent back to the LLM for processing. 'run_llm_again' option directs this behavior.
-    4. The LLM decides what to do with the result. 
+    3. The tool result is sent back directly to user without processing.
 """
 
 load_dotenv()
